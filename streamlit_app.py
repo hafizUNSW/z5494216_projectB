@@ -252,6 +252,7 @@ def _theme(
     fig.update_xaxes(
         showgrid=False, showline=False, zeroline=False,
         tickfont={"color": TICK, "size": 12},
+        automargin=True, title_standoff=10,
         rangeslider={
             "visible": True, "thickness": 0.07,
             "bordercolor": BORDER, "bgcolor": PANEL,
@@ -260,6 +261,7 @@ def _theme(
     fig.update_yaxes(
         showgrid=True, gridcolor=GRID, zeroline=False,
         tickfont={"color": TICK, "size": 12},
+        automargin=True, title_standoff=12,
         title=ytitle, title_font={"size": 13, "color": TICK},
     )
     return fig
@@ -358,14 +360,11 @@ def compare_tab() -> None:
     _plot(fig)
 
     fig2 = go.Figure()
-    for i, f in enumerate(selected):
+    for f in selected:
         m = metrics[metrics["fund"] == f].iloc[0]
         fig2.add_trace(go.Scatter(
             x=[m["annualized_volatility"]], y=[m["annualized_return"]],
-            mode="markers+text", name=f, text=[f],
-            texttemplate="%{text}", textfont={"size": 10, "color": TICK},
-            textposition="top center" if i % 2 == 0 else "bottom center",
-            cliponaxis=False,
+            mode="markers", name=f,
             marker={"size": 17, "color": colors[f],
                     "line": {"color": "white", "width": 2}},
             hovertemplate="<b>%{fullData.name}</b><br>Volatility: %{x:.1%}"
