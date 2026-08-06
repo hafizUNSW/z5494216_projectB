@@ -25,10 +25,9 @@ the mechanical ones.
 - [x] The folder is its own GitHub repository, committed and pushed to a
       PUBLIC repo: github.com/hafizUNSW/z5494216_projectB (branch main),
       verified that no raw data or secrets are committed.
-- [ ] STILL TO DO (student's browser step): deploy the live Streamlit app from
-      share.streamlit.io (repo: hafizUNSW/z5494216_projectB, branch main,
-      entrypoint streamlit_app.py), confirm it still loads, and note the live
-      URL here.
+- [x] The live Streamlit app is deployed from Streamlit Community Cloud
+      (repo: hafizUNSW/z5494216_projectB, branch main, entrypoint
+      streamlit_app.py) and loads: https://z5494216projectb-3un3u83swdfcueilspfrhq.streamlit.app/
 - [x] Raw data loads through src/data_access.py; no raw data or secrets committed
       (results/ artifacts - the CSVs the app reads - are committed;
       check_handin.py verifies the guard).
