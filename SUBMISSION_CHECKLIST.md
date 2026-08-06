@@ -22,18 +22,20 @@ the mechanical ones.
 - [x] streamlit_app.py runs locally: streamlit run streamlit_app.py (verified
       with the Streamlit testing harness and headless HTTP 200; reads only the
       four required results/ CSVs).
-- [ ] STILL TO DO (student's browser step): the GitHub repo is PUBLIC and the
-      live Streamlit app loads. The folder is not yet its own repository - run
-      `git init` here, commit code + results/ (never raw data), push to a new
-      repo, deploy from share.streamlit.io with entrypoint streamlit_app.py,
-      then flip the repo to PUBLIC and confirm the live app still loads.
+- [x] The folder is its own GitHub repository, committed and pushed to a
+      PUBLIC repo: github.com/hafizUNSW/z5494216_projectB (branch main),
+      verified that no raw data or secrets are committed.
+- [ ] STILL TO DO (student's browser step): deploy the live Streamlit app from
+      share.streamlit.io (repo: hafizUNSW/z5494216_projectB, branch main,
+      entrypoint streamlit_app.py), confirm it still loads, and note the live
+      URL here.
 - [x] Raw data loads through src/data_access.py; no raw data or secrets committed
       (results/ artifacts - the CSVs the app reads - are committed;
       check_handin.py verifies the guard).
 - [x] AGENTS.md or CLAUDE.md (your tool's file) is YOUR own, not the stub
       (both AGENTS.md and CLAUDE.md replaced with real instructions).
 - [x] ai/ contains your prompt logs and AI notes (ai/AI_NOTES.md + prompt logs
-      01-07).
+       01-08).
 - [ ] STILL TO DO (must be your own words): the writing and interpretation are
       your own. Every AI-drafted paragraph in report/report.docx is marked with
       a red [DRAFT] tag - rewrite each in your own words, delete the tags, then
