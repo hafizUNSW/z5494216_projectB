@@ -5,6 +5,7 @@ scipy>=1.11
 pyarrow>=12.0
 requests>=2.31
 matplotlib>=3.7
+plotly>=5.20
 # App (deploy) dependencies only. Build/reproduction tools - nltk for the sentiment
 # model in scripts/run_part_b.py - live in requirements-dev.txt. Install both for a
 # clean-machine repro; keep the deployed app on requirements.txt so cold starts stay

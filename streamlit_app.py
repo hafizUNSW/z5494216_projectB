@@ -15,6 +15,9 @@ enough for Streamlit Community Cloud:
   results/data/sector_sentiment_index.csv
   results/tables/performance_metrics.csv
 
+Charts are interactive Plotly figures styled for a modern wealth-management
+look (soft area fills, donuts for holdings, range sliders, unified hover).
+
 Run locally with:
 
     streamlit run streamlit_app.py
@@ -23,27 +26,28 @@ from __future__ import annotations
 
 import pathlib
 
-import matplotlib
-
-matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 
 ROOT = pathlib.Path(__file__).resolve().parent
 DATA = ROOT / "results" / "data"
 TABLES = ROOT / "results" / "tables"
 
-# --- Quantis design system (the Economist-style palette carried from Part A) ---
+# --- Quantis modern design system (kept self-contained, no shared packages) ---
 RED = "#E3120B"
 BLUE = "#0D5691"
-GREY = "#666666"
+GOLD = "#C77D3A"
+TEAL = "#0E7C86"
+GREY = "#64748B"
+TEXT = "#1E293B"
+GRID = "#EFF3F8"
+BORDER = "#E3E9F2"
+CARD_BG = "#F8FAFC"
 PAL = [
-    "#0D5691", "#E3120B", "#4E8C2C", "#D98B35",
-    "#6C3483", "#1AABB8", "#BC4B52", "#4A5568",
-    "#5B7553", "#8B6914",
+    "#0D5691", "#E3120B", "#2E8B57", "#C77D3A", "#7C5FBF",
+    "#0E7C86", "#C34A4A", "#4A5568", "#6B7F6B", "#8B6914",
 ]
 
 FAMILY_LABEL = {"equity": "Equity", "crypto": "Crypto", "combined": "Equity + Crypto"}
@@ -62,6 +66,14 @@ def _method_label(method: str) -> str:
     return METHOD_LABEL.get(method, method)
 
 st.set_page_config(page_title="Quantis", page_icon="Q", layout="wide")
+st.markdown(
+    f"<style>"
+    f".block-container {{padding-top: 1.8rem; max-width: 1200px;}}"
+    f"div[data-testid='stMetric'] {{background:{CARD_BG}; border:1px solid {BORDER}; "
+    f"border-radius:16px; padding:10px 14px;}}"
+    f"</style>",
+    unsafe_allow_html=True,
+)
 st.title("Quantis")
 st.caption(
     "Systematically managed multi-asset funds - out-of-sample performance, "
@@ -144,15 +156,10 @@ def summary_metrics(returns: pd.Series, periods_per_year: int = 252) -> dict:
     }
 
 
-def _style(fig: plt.Figure) -> plt.Figure:
-    """Apply the Quantis look to a freshly-made figure."""
-    for ax in fig.get_axes():
-        for s in ("top", "right"):
-            ax.spines[s].set_visible(False)
-        ax.set_facecolor("white")
-        ax.grid(True, axis="y", alpha=0.4, color="#E0E0E0", linewidth=0.5)
-    fig.patch.set_facecolor("white")
-    return fig
+def _rgba(hex_color: str, alpha: float) -> str:
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r}, {g}, {b}, {alpha})"
 
 
 def _fund_colors(funds: list[str]) -> dict:
@@ -163,6 +170,87 @@ def _pct(x: float) -> str:
     return f"{x:+.1%}" if np.isfinite(x) else "n/a"
 
 
+def _theme(
+    fig: go.Figure,
+    *,
+    height: int = 430,
+    title: str | None = None,
+    ytitle: str | None = None,
+    slider: bool = False,
+    hovermode: str = "x unified",
+    showlegend: bool = True,
+    legend_y: float = 1.12,
+    legend_x: float = 1,
+) -> go.Figure:
+    """Apply the modern Quantis chart style to a freshly-built figure."""
+    legend_below = legend_y < 0
+    top_margin = 52 if showlegend and not legend_below else 36
+    bottom_margin = (
+        88 if legend_below and slider
+        else (66 if slider else (52 if legend_below else 34))
+    )
+    fig.update_layout(
+        template="plotly_white",
+        height=height,
+        margin={"l": 12, "r": 12, "t": top_margin, "b": bottom_margin},
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        font={"family": "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif",
+              "size": 13, "color": TEXT},
+        hovermode=hovermode,
+        hoverlabel={"bgcolor": "#0F172A", "bordercolor": "white", "font": {"color": "white"}},
+        showlegend=showlegend,
+        legend={
+            "orientation": "h", "y": legend_y, "x": legend_x,
+            "xanchor": "left" if legend_below else "right",
+            "yanchor": "top" if legend_below else "bottom",
+            "title": None, "font": {"color": GREY, "size": 12},
+        },
+        title={"text": title, "x": 0, "xanchor": "left", "font": {"size": 16, "color": TEXT}}
+        if title else None,
+    )
+    fig.update_xaxes(
+        showgrid=False, showline=False, zeroline=False, tickfont={"color": GREY},
+        rangeslider={"visible": True, "thickness": 0.07, "bordercolor": BORDER} if slider else None,
+    )
+    fig.update_yaxes(
+        showgrid=True, gridcolor=GRID, zeroline=False, tickfont={"color": GREY},
+        title=ytitle, title_font={"size": 12, "color": GREY},
+    )
+    return fig
+
+
+def _plot(fig: go.Figure) -> None:
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+
+def _tile(label: str, value: str) -> None:
+    st.markdown(
+        f'<div style="background:{CARD_BG};border:1px solid {BORDER};border-radius:16px;'
+        f'padding:12px 14px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">'
+        f'<div style="font-size:11px;font-weight:700;letter-spacing:0.06em;'
+        f'color:{GREY};text-transform:uppercase;">{label}</div>'
+        f'<div style="font-size:24px;font-weight:700;color:{TEXT};'
+        f'line-height:1.3;margin-top:2px;">{value}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def _fund_growth_trace(
+    fund: str, color: str, *, width: float = 2.2, alpha: float = 0.06
+) -> go.Scatter:
+    g = growth_of_one(fund_return_series(fund))
+    return go.Scatter(
+        x=g.index, y=g, mode="lines", name=fund,
+        line={"color": color, "width": width},
+        fill="tozeroy", fillcolor=_rgba(color, alpha),
+        hovertemplate=(
+            "%{x|%d %b %Y}<br><b>%{fullData.name}</b><br>"
+            "Value of $1: %{y:.2f}<extra></extra>"
+        ),
+    )
+
+
 # ---------------------------------------------------------------------------
 # Compare tab
 # ---------------------------------------------------------------------------
@@ -171,7 +259,6 @@ def compare_tab() -> None:
     metrics = load_metrics()
     metrics["family_label"] = metrics["family"].map(FAMILY_LABEL)
     metrics["method_label"] = metrics["method"].map(_method_label)
-    metrics["label"] = metrics["fund"]
 
     funds = list(metrics["fund"])
     defaults = [f for f in funds if f.startswith("Equity")]
@@ -184,16 +271,28 @@ def compare_tab() -> None:
         return
 
     view = metrics[metrics["fund"].isin(selected)].copy()
+    first = view.iloc[0]
+    c1, c2, c3, c4, c5 = st.columns(5)
+    with c1:
+        _tile("Annualised return", _pct(first["annualized_return"]))
+    with c2:
+        _tile("Annualised vol", f"{first['annualized_volatility']:.1%}")
+    with c3:
+        _tile("Sharpe", f"{first['sharpe_ratio']:.2f}")
+    with c4:
+        _tile("Max drawdown", f"{first['max_drawdown']:.1%}")
+    with c5:
+        _tile("Growth of $1", f"${first['growth_of_1']:.2f}")
+    st.caption(
+        f"Headline numbers shown for **{first['fund']}** - all selected funds "
+        "are in the table below."
+    )
+
     view["return"] = view["annualized_return"].map(lambda v: f"{v:.2%}")
     view["volatility"] = view["annualized_volatility"].map(lambda v: f"{v:.2%}")
     view["Sharpe"] = view["sharpe_ratio"].map(lambda v: f"{v:.2f}")
     view["max drawdown"] = view["max_drawdown"].map(lambda v: f"{v:.1%}")
     view["growth of $1"] = view["growth_of_1"].map(lambda v: f"${v:.2f}")
-
-    cols = st.columns(5)
-    labels = ["return", "volatility", "Sharpe", "max drawdown", "growth of $1"]
-    for col, lab in zip(cols, labels):
-        col.metric(lab, view[lab].iloc[0])
     st.dataframe(
         view[["fund", "family_label", "method_label", "return", "volatility",
               "Sharpe", "max drawdown", "growth of $1", "oos_period"]]
@@ -205,30 +304,32 @@ def compare_tab() -> None:
             "oos_period": "Out-of-sample period",
         }),
         hide_index=True,
+        use_container_width=True,
     )
 
-    growth = pd.DataFrame({f: growth_of_one(fund_return_series(f)) for f in selected})
-    fig, ax = plt.subplots(figsize=(11, 4.6))
     colors = _fund_colors(selected)
-    for f in selected:
-        ax.plot(growth.index, growth[f].to_numpy(), linewidth=1.4,
-                color=colors[f], label=f)
-    ax.set_title("Growth of $1 (out-of-sample)", fontweight="bold")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Value of $1")
-    ax.legend(fontsize=8, ncol=2, loc="upper left")
-    st.pyplot(_style(fig))
+    fig = go.Figure([_fund_growth_trace(f, colors[f]) for f in selected])
+    _theme(fig, height=460, title="Growth of $1 - out of sample",
+           ytitle="Value of $1", slider=True, legend_y=-0.2, legend_x=0)
+    _plot(fig)
 
-    fig2, ax2 = plt.subplots(figsize=(11, 4.6))
+    fig2 = go.Figure()
     for f in selected:
         m = metrics[metrics["fund"] == f].iloc[0]
-        ax2.scatter(m["annualized_volatility"], m["annualized_return"],
-                    color=colors[f], s=70, label=f)
-    ax2.set_title("Return vs risk (out-of-sample)", fontweight="bold")
-    ax2.set_xlabel("Annualised volatility")
-    ax2.set_ylabel("Annualised return")
-    ax2.legend(fontsize=8, loc="best")
-    st.pyplot(_style(fig2))
+        fig2.add_trace(go.Scatter(
+            x=[m["annualized_volatility"]], y=[m["annualized_return"]],
+            mode="markers", name=f,
+            marker={"size": 17, "color": colors[f],
+                    "line": {"color": "white", "width": 2}},
+            hovertemplate="<b>%{fullData.name}</b><br>Volatility: %{x:.1%}"
+                          "<br>Return: %{y:.1%}<extra></extra>",
+        ))
+    _theme(fig2, height=420, title="Return vs risk - out of sample",
+           ytitle="Annualised return", hovermode="closest",
+           legend_y=-0.2, legend_x=0)
+    fig2.update_xaxes(tickformat=".0%", title="Annualised volatility",
+                      title_font={"size": 12, "color": GREY})
+    _plot(fig2)
 
 
 # ---------------------------------------------------------------------------
@@ -244,54 +345,80 @@ def fact_sheet_tab() -> None:
     dd = drawdown_series(r)
 
     c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Annualised return", _pct(m["annualized_return"]))
-    c2.metric("Annualised vol", f"{m['annualized_volatility']:.1%}")
-    c3.metric("Sharpe ratio", f"{m['sharpe_ratio']:.2f}")
-    c4.metric("Max drawdown", f"{m['max_drawdown']:.1%}")
-    c5.metric("Growth of $1", f"${m['growth_of_1']:.2f}")
+    with c1:
+        _tile("Annualised return", _pct(m["annualized_return"]))
+    with c2:
+        _tile("Annualised vol", f"{m['annualized_volatility']:.1%}")
+    with c3:
+        _tile("Sharpe ratio", f"{m['sharpe_ratio']:.2f}")
+    with c4:
+        _tile("Max drawdown", f"{m['max_drawdown']:.1%}")
+    with c5:
+        _tile("Growth of $1", f"${m['growth_of_1']:.2f}")
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4))
-    axes[0].plot(growth.index, growth.to_numpy(), color=BLUE, linewidth=1.4)
-    axes[0].set_title("Growth of $1", fontweight="bold")
-    axes[0].set_xlabel("Date")
-    axes[0].set_ylabel("Value of $1")
-    axes[1].plot(dd.index, dd.to_numpy(), color=RED, linewidth=1.4)
-    axes[1].set_title("Drawdown", fontweight="bold")
-    axes[1].set_xlabel("Date")
-    axes[1].set_ylabel("Drawdown")
-    fig.tight_layout()
-    st.pyplot(_style(fig))
+    col_l, col_r = st.columns(2)
+    with col_l:
+        fig = go.Figure(go.Scatter(
+            x=growth.index, y=growth, mode="lines",
+            line={"color": BLUE, "width": 2.4},
+            fill="tozeroy", fillcolor=_rgba(BLUE, 0.08),
+            hovertemplate="%{x|%d %b %Y}<br>Value of $1: %{y:.2f}<extra></extra>",
+        ))
+        _theme(fig, height=400, title="Growth of $1", ytitle="Value of $1",
+               slider=True, showlegend=False)
+        _plot(fig)
+    with col_r:
+        fig = go.Figure(go.Scatter(
+            x=dd.index, y=dd, mode="lines",
+            line={"color": RED, "width": 2.0},
+            fill="tozeroy", fillcolor=_rgba(RED, 0.12),
+            hovertemplate="%{x|%d %b %Y}<br>Drawdown: %{y:.1%}<extra></extra>",
+        ))
+        _theme(fig, height=400, title="Drawdown", ytitle="Drawdown", slider=True, showlegend=False)
+        fig.update_yaxes(tickformat=".0%")
+        _plot(fig)
 
     top = load_current_holdings(fund)
     if len(top):
         st.markdown(f"**Current holdings** (top {len(top)} positions at the latest rebalance)")
-        fig2, ax2 = plt.subplots(figsize=(11, 0.35 * len(top) + 1.6))
-        ax2.barh(top["ticker"].to_numpy(), top["weight_pct"].to_numpy(),
-                 color=BLUE, height=0.6)
-        ax2.set_xlabel("Weight (%)")
-        ax2.set_title("Current holdings", fontweight="bold")
-        fig2.tight_layout()
-        st.pyplot(_style(fig2))
-
-    weights = load_fund_weights()
-    wf = weights[weights["fund"] == fund]
-    if len(wf):
-        top_tickers = list(top["ticker"])
-        pivot = (wf[wf["ticker"].isin(top_tickers)]
-                 .pivot(index="rebalance_date", columns="ticker", values="weight")
-                 .fillna(0.0).sort_index())
-        if len(pivot):
-            fig3, ax3 = plt.subplots(figsize=(11, 4.2))
-            colors = _fund_colors(list(pivot.columns))
-            for t in pivot.columns:
-                ax3.plot(pivot.index, pivot[t].to_numpy(), linewidth=1.1,
-                         color=colors[t], label=t)
-            ax3.set_title("Weights over time (top current holdings)", fontweight="bold")
-            ax3.set_xlabel("Rebalance date")
-            ax3.set_ylabel("Weight")
-            ax3.set_ylim(0, 1)
-            ax3.legend(fontsize=8, ncol=3, loc="upper left")
-            st.pyplot(_style(fig3))
+        col_d, col_w = st.columns(2)
+        with col_d:
+            fig = go.Figure(go.Pie(
+                labels=top["ticker"], values=top["weight_pct"],
+                hole=0.68, sort=False, direction="clockwise",
+                marker={"colors": [PAL[i % len(PAL)] for i in range(len(top))],
+                        "line": {"color": "white", "width": 2}},
+                textinfo="none",
+                customdata=top["weight_pct"],
+                hovertemplate="<b>%{label}</b><br>%{customdata:.2f}% of the fund<extra></extra>",
+            ))
+            fig.add_annotation(
+                text=(f"<b>{len(top)} positions</b>"
+                      "<br><span style='font-size:12px'>latest rebalance</span>"),
+                showarrow=False, x=0.5, y=0.5, font={"color": TEXT, "size": 14},
+            )
+            _theme(fig, height=380, title="Portfolio split", hovermode="closest",
+                   legend_y=-0.2, legend_x=0)
+            _plot(fig)
+        with col_w:
+            weights = load_fund_weights()
+            wf = weights[weights["fund"] == fund]
+            pivot = (wf[wf["ticker"].isin(top["ticker"])]
+                     .pivot(index="rebalance_date", columns="ticker", values="weight")
+                     .fillna(0.0).sort_index())
+            if len(pivot):
+                fig = go.Figure()
+                for i, t in enumerate(pivot.columns):
+                    fig.add_trace(go.Scatter(
+                        x=pivot.index, y=pivot[t], mode="lines", stackgroup="one",
+                        name=t, line={"width": 0.4, "color": PAL[i % len(PAL)]},
+                        fillcolor=PAL[i % len(PAL)],
+                        hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.1%}<extra></extra>",
+                    ))
+                _theme(fig, height=380, title="Allocation over time",
+                       ytitle="Weight", slider=True, legend_y=-0.2, legend_x=0)
+                fig.update_yaxes(tickformat=".0%", range=[0, 1])
+                _plot(fig)
 
 
 # ---------------------------------------------------------------------------
@@ -335,26 +462,55 @@ def allocate_tab() -> None:
 
     m = summary_metrics(blended)
     c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Blended annualised return", _pct(m["annualized_return"]))
-    c2.metric("Blended annualised vol", f"{m['annualized_volatility']:.1%}")
-    c3.metric("Blended Sharpe", f"{m['sharpe_ratio']:.2f}")
-    c4.metric("Blended max drawdown", f"{m['max_drawdown']:.1%}")
-    c5.metric("Blended growth of $1", f"${m['growth_of_1']:.2f}")
+    with c1:
+        _tile("Blended return", _pct(m["annualized_return"]))
+    with c2:
+        _tile("Blended vol", f"{m['annualized_volatility']:.1%}")
+    with c3:
+        _tile("Blended Sharpe", f"{m['sharpe_ratio']:.2f}")
+    with c4:
+        _tile("Blended max drawdown", f"{m['max_drawdown']:.1%}")
+    with c5:
+        _tile("Blended growth of $1", f"${m['growth_of_1']:.2f}")
 
-    growth = growth_of_one(blended)
-    fig, ax = plt.subplots(figsize=(11, 4.6))
-    colors = _fund_colors(chosen)
-    for fund in chosen:
-        g = growth_of_one(wide[fund].dropna())
-        ax.plot(g.index, g.to_numpy(), color=colors[fund], linewidth=1.0,
-                alpha=0.6, label=fund)
-    ax.plot(growth.index, growth.to_numpy(), color=RED, linewidth=2.0,
-            label=f"Blended (${total} split {', '.join(f'{w:.0%}' for w in alloc.values())})")
-    ax.set_title("Your allocation vs the funds", fontweight="bold")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Value of $1")
-    ax.legend(fontsize=8, loc="upper left")
-    st.pyplot(_style(fig))
+    col_p, col_g = st.columns(2)
+    with col_p:
+        fig = go.Figure(go.Pie(
+            labels=list(alloc.keys()), values=[w * 100 for w in alloc.values()],
+            hole=0.68, sort=False, direction="clockwise",
+            marker={"colors": [_fund_colors(chosen)[f] for f in chosen],
+                    "line": {"color": "white", "width": 2}},
+            textinfo="percent", textposition="inside", textfont={"color": "white", "size": 13},
+            customdata=[alloc[f] for f in chosen],
+            hovertemplate="<b>%{label}</b><br>%{customdata:.0%} of portfolio<extra></extra>",
+        ))
+        fig.add_annotation(
+            text=f"<b>{total:.0f}%</b><br><span style='font-size:12px'>allocated</span>",
+            showarrow=False, x=0.5, y=0.5, font={"color": TEXT, "size": 14},
+        )
+        _theme(fig, height=400, title="Your split", hovermode="closest", showlegend=False)
+        _plot(fig)
+    with col_g:
+        growth = growth_of_one(blended)
+        fig = go.Figure()
+        colors = _fund_colors(chosen)
+        for fund in chosen:
+            g = growth_of_one(wide[fund].dropna())
+            fig.add_trace(go.Scatter(
+                x=g.index, y=g, mode="lines", name=fund,
+                line={"color": colors[fund], "width": 1.3},
+                opacity=0.55,
+                hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.2f}<extra></extra>",
+            ))
+        fig.add_trace(go.Scatter(
+            x=growth.index, y=growth, mode="lines", name="Your portfolio",
+            line={"color": RED, "width": 2.6},
+            fill="tozeroy", fillcolor=_rgba(RED, 0.08),
+            hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.2f}<extra></extra>",
+        ))
+        _theme(fig, height=400, title="Your allocation vs the funds",
+               ytitle="Value of $1", slider=True, legend_y=-0.2, legend_x=0)
+        _plot(fig)
 
 
 # ---------------------------------------------------------------------------
@@ -372,33 +528,39 @@ def sentiment_tab() -> None:
     sector = st.selectbox("Sector", list(sector_df["sector"].unique()), key="sent_sector")
     sub = sector_df[sector_df["sector"] == sector].set_index("trade_date")
 
-    fig, ax = plt.subplots(figsize=(11, 4.4))
-    ax.plot(sub.index, sub["sentiment"].to_numpy(), color=BLUE, linewidth=1.2,
-            label="Sentiment (same day)")
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=sub.index, y=sub["sentiment"], mode="lines", name="Sentiment (same day)",
+        line={"color": BLUE, "width": 1.6},
+        hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.3f}<extra></extra>",
+    ))
     lag = sub["sentiment_lag1"].dropna()
-    ax.plot(lag.index, lag.to_numpy(), color=RED, linewidth=1.0, alpha=0.8,
-            label="Sentiment (lagged 1 trading day - what trades can use)")
-    ax.axhline(0.0, color=GREY, linewidth=0.8, linestyle="--")
-    ax.set_title(f"{sector} sector sentiment over time", fontweight="bold")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Sentiment (compound)")
-    ax.legend(fontsize=8, loc="best")
-    st.pyplot(_style(fig))
+    fig.add_trace(go.Scatter(
+        x=lag.index, y=lag, mode="lines", name="Lagged 1 day (what trades can use)",
+        line={"color": RED, "width": 1.4},
+        fill="tozeroy", fillcolor=_rgba(RED, 0.05),
+        hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.3f}<extra></extra>",
+    ))
+    fig.add_hline(y=0.0, line_dash="dot", line_color=GREY, line_width=1)
+    _theme(fig, height=430, title=f"{sector} sector sentiment over time",
+           ytitle="Sentiment (compound)", slider=True, legend_y=-0.2, legend_x=0)
+    fig.update_yaxes(tickformat=".3f")
+    _plot(fig)
 
-    monthly = (sub["sentiment"].resample("ME").mean().dropna()
-               .reset_index().rename(columns={"trade_date": "Month", "sentiment": "Sentiment"}))
-    monthly["Month"] = monthly["Month"].dt.strftime("%Y-%m")
-    st.markdown("**Monthly average** (all sectors)")
     monthly_all = (sector_df.groupby([pd.Grouper(key="trade_date", freq="ME"), "sector"])
                    ["sentiment"].mean().reset_index())
     monthly_all["Month"] = monthly_all["trade_date"].dt.strftime("%Y-%m")
     monthly_wide = monthly_all.pivot(index="Month", columns="sector", values="sentiment")
-    st.dataframe(monthly_wide.round(3), hide_index=False)
+    st.markdown("**Monthly average** (all sectors)")
+    st.dataframe(monthly_wide.round(3), use_container_width=True)
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Selected sector: mean", f"{sub['sentiment'].mean():+.4f}")
-    c2.metric("Selected sector: std", f"{sub['sentiment'].std():.4f}")
-    c3.metric("Days above neutral", f"{(sub['sentiment'] > 0).mean():.0%}")
+    with c1:
+        _tile("Selected sector: mean", f"{sub['sentiment'].mean():+.4f}")
+    with c2:
+        _tile("Selected sector: std", f"{sub['sentiment'].std():.4f}")
+    with c3:
+        _tile("Days above neutral", f"{(sub['sentiment'] > 0).mean():.0%}")
     st.caption(
         "The sentiment index feeds the equity-fund tilt (fusion); the "
         "before-vs-after evidence is a report exhibit (results/tables/"
