@@ -42,6 +42,7 @@ PANEL = "#141416"
 PANEL_HI = "#1C1C1F"
 BORDER = "#26262B"
 MUTED = "#8A8A90"
+TICK = "#B3B3BC"
 TEXT = "#F5F5F6"
 GRID = "#202026"
 GREEN = "#00C805"
@@ -221,10 +222,12 @@ def _theme(
 ) -> go.Figure:
     """Apply the dark Quantis chart style to a freshly-built figure."""
     legend_below = legend_y < 0
+    n_series = len(fig.data)
+    legend_rows = (-(-n_series // 5)) if showlegend and legend_below else 0
     top_margin = 52 if showlegend and not legend_below else 36
     bottom_margin = (
-        88 if legend_below and slider
-        else (66 if slider else (52 if legend_below else 34))
+        (66 + (legend_rows - 1) * 18) if slider
+        else (52 + (legend_rows - 1) * 18)
     )
     fig.update_layout(
         template=None,
@@ -247,15 +250,17 @@ def _theme(
         if title else None,
     )
     fig.update_xaxes(
-        showgrid=False, showline=False, zeroline=False, tickfont={"color": MUTED},
+        showgrid=False, showline=False, zeroline=False,
+        tickfont={"color": TICK, "size": 12},
         rangeslider={
             "visible": True, "thickness": 0.07,
             "bordercolor": BORDER, "bgcolor": PANEL,
         } if slider else None,
     )
     fig.update_yaxes(
-        showgrid=True, gridcolor=GRID, zeroline=False, tickfont={"color": MUTED},
-        title=ytitle, title_font={"size": 12, "color": MUTED},
+        showgrid=True, gridcolor=GRID, zeroline=False,
+        tickfont={"color": TICK, "size": 12},
+        title=ytitle, title_font={"size": 13, "color": TICK},
     )
     return fig
 
@@ -353,21 +358,29 @@ def compare_tab() -> None:
     _plot(fig)
 
     fig2 = go.Figure()
-    for f in selected:
+    for i, f in enumerate(selected):
         m = metrics[metrics["fund"] == f].iloc[0]
         fig2.add_trace(go.Scatter(
             x=[m["annualized_volatility"]], y=[m["annualized_return"]],
-            mode="markers", name=f,
+            mode="markers+text", name=f, text=[f],
+            texttemplate="%{text}", textfont={"size": 10, "color": TICK},
+            textposition="top center" if i % 2 == 0 else "bottom center",
+            cliponaxis=False,
             marker={"size": 17, "color": colors[f],
                     "line": {"color": "white", "width": 2}},
             hovertemplate="<b>%{fullData.name}</b><br>Volatility: %{x:.1%}"
                           "<br>Return: %{y:.1%}<extra></extra>",
         ))
-    _theme(fig2, height=420, title="Return vs risk - out of sample",
+    _theme(fig2, height=480, title="Return vs risk - out of sample",
            ytitle="Annualised return", hovermode="closest",
            legend_y=-0.2, legend_x=0)
+    vol_max = float(view["annualized_volatility"].max())
+    ret_max = float(view["annualized_return"].max())
+    ret_min = float(view["annualized_return"].min())
     fig2.update_xaxes(tickformat=".0%", title="Annualised volatility",
-                      title_font={"size": 12, "color": MUTED})
+                      range=[0, vol_max * 1.18],
+                      title_font={"size": 12, "color": TICK})
+    fig2.update_yaxes(tickformat=".0%", range=[ret_min * 1.15, ret_max * 1.25])
     _plot(fig2)
 
 
