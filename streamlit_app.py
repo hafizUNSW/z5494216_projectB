@@ -220,15 +220,24 @@ def _theme(
     legend_y: float = 1.12,
     legend_x: float = 1,
 ) -> go.Figure:
-    """Apply the dark Quantis chart style to a freshly-built figure."""
+    """Apply the dark Quantis chart style to a freshly-built figure.
+
+    Legends under the chart wrap into rows (paper-anchored) and the bottom
+    margin is sized from the longest entry name, so every fund is visible with
+    no clipped or overlapping text.
+    """
     legend_below = legend_y < 0
     n_series = len(fig.data)
-    legend_rows = (-(-n_series // 5)) if showlegend and legend_below else 0
+    if showlegend and legend_below:
+        longest = max((len(str(t.name or "")) for t in fig.data), default=0)
+        entry_px = longest * 6.6 + 10
+        per_row = max(1, int(1040 // entry_px))
+        legend_rows = -(-n_series // per_row)
+    else:
+        legend_rows = 0
     top_margin = 52 if showlegend and not legend_below else 36
-    bottom_margin = (
-        (66 + (legend_rows - 1) * 18) if slider
-        else (52 + (legend_rows - 1) * 18)
-    )
+    base_bottom = 40 + 38 * legend_rows if legend_below else 34
+    bottom_margin = base_bottom + 41 if slider else base_bottom
     fig.update_layout(
         template=None,
         height=height,
@@ -241,10 +250,12 @@ def _theme(
         hoverlabel={"bgcolor": PANEL_HI, "bordercolor": BORDER, "font": {"color": TEXT}},
         showlegend=showlegend,
         legend={
-            "orientation": "h", "y": legend_y, "x": legend_x,
+            "orientation": "h", "y": -0.2 if legend_below else legend_y,
+            "x": legend_x,
             "xanchor": "left" if legend_below else "right",
             "yanchor": "top" if legend_below else "bottom",
-            "title": None, "font": {"color": MUTED, "size": 12},
+            "xref": "paper",
+            "title": None, "font": {"color": MUTED, "size": 11},
         },
         title={"text": title, "x": 0, "xanchor": "left", "font": {"size": 16, "color": TEXT}}
         if title else None,
@@ -372,7 +383,7 @@ def compare_tab() -> None:
         ))
     _theme(fig2, height=480, title="Return vs risk - out of sample",
            ytitle="Annualised return", hovermode="closest",
-           legend_y=-0.2, legend_x=0)
+           legend_y=-0.28, legend_x=0)
     vol_max = float(view["annualized_volatility"].max())
     ret_max = float(view["annualized_return"].max())
     ret_min = float(view["annualized_return"].min())
