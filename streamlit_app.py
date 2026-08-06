@@ -15,8 +15,9 @@ enough for Streamlit Community Cloud:
   results/data/sector_sentiment_index.csv
   results/tables/performance_metrics.csv
 
-Charts are interactive Plotly figures styled for a modern wealth-management
-look (soft area fills, donuts for holdings, range sliders, unified hover).
+Charts are interactive Plotly figures in a dark, fintech-style design system
+(soft area fills, donuts for holdings, range sliders, unified hover, sign-coded
+green/red tiles).
 
 Run locally with:
 
@@ -35,19 +36,21 @@ ROOT = pathlib.Path(__file__).resolve().parent
 DATA = ROOT / "results" / "data"
 TABLES = ROOT / "results" / "tables"
 
-# --- Quantis modern design system (kept self-contained, no shared packages) ---
-RED = "#E3120B"
-BLUE = "#0D5691"
-GOLD = "#C77D3A"
-TEAL = "#0E7C86"
-GREY = "#64748B"
-TEXT = "#1E293B"
-GRID = "#EFF3F8"
-BORDER = "#E3E9F2"
-CARD_BG = "#F8FAFC"
+# --- Quantis dark design system (clean fintech look, kept self-contained) ---
+BG = "#0A0A0B"
+PANEL = "#141416"
+PANEL_HI = "#1C1C1F"
+BORDER = "#26262B"
+MUTED = "#8A8A90"
+TEXT = "#F5F5F6"
+GRID = "#202026"
+GREEN = "#00C805"
+RED = "#FF4D4D"
+BLUE = "#58A6FF"
+GOLD = "#D29922"
 PAL = [
-    "#0D5691", "#E3120B", "#2E8B57", "#C77D3A", "#7C5FBF",
-    "#0E7C86", "#C34A4A", "#4A5568", "#6B7F6B", "#8B6914",
+    "#58A6FF", "#FF7B72", "#3FB950", "#D29922", "#BC8CFF",
+    "#39C5CF", "#FFA198", "#8B949E", "#7EE787", "#F2CC60",
 ]
 
 FAMILY_LABEL = {"equity": "Equity", "crypto": "Crypto", "combined": "Equity + Crypto"}
@@ -67,18 +70,48 @@ def _method_label(method: str) -> str:
 
 st.set_page_config(page_title="Quantis", page_icon="Q", layout="wide")
 st.markdown(
-    f"<style>"
-    f".block-container {{padding-top: 1.8rem; max-width: 1200px;}}"
-    f"div[data-testid='stMetric'] {{background:{CARD_BG}; border:1px solid {BORDER}; "
-    f"border-radius:16px; padding:10px 14px;}}"
-    f"</style>",
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    html, body, [class*="css"] { font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, sans-serif; }
+    .block-container { padding-top: 1.6rem; padding-bottom: 3rem; max-width: 1180px; }
+    .stApp { background-color: #0A0A0B; }
+    header[data-testid="stHeader"] { background: transparent; }
+    .qhdr { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+    .qlogo { width: 44px; height: 44px; border-radius: 12px; flex: 0 0 auto;
+        background: linear-gradient(135deg, #00C805, #0093E0); display: flex;
+        align-items: center; justify-content: center; font-weight: 800; font-size: 24px;
+        color: #FFFFFF; box-shadow: 0 2px 14px rgba(0, 200, 5, 0.35); }
+    .qtitle { font-size: 30px; font-weight: 800; color: #F5F5F6;
+        letter-spacing: -0.5px; line-height: 1.05; }
+    .qsub { color: #8A8A90; font-size: 14px; margin-top: 2px; }
+    .qtile { background: #141416; border: 1px solid #26262B; border-radius: 14px;
+        padding: 12px 14px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); }
+    .qtil-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+        text-transform: uppercase; color: #8A8A90; }
+    .qtil-val { font-size: 24px; font-weight: 700; color: #F5F5F6;
+        line-height: 1.3; margin-top: 2px; }
+    .qtil-val.pos { color: #00C805; }
+    .qtil-val.neg { color: #FF4D4D; }
+    .stTabs [data-baseweb="tab-list"] { gap: 4px; }
+    .stTabs [data-baseweb="tab"] { background: #141416; border: 1px solid #26262B;
+        border-radius: 10px; padding: 4px 16px; }
+    .stTabs [aria-selected="true"] { background: #1C1C1F; }
+    </style>
+    """,
     unsafe_allow_html=True,
 )
-st.title("Quantis")
+st.markdown(
+    '<div class="qhdr"><div class="qlogo">Q</div>'
+    '<div><div class="qtitle">Quantis</div>'
+    '<div class="qsub">Systematic multi-asset funds &bull; out-of-sample performance</div>'
+    "</div></div>",
+    unsafe_allow_html=True,
+)
 st.caption(
-    "Systematically managed multi-asset funds - out-of-sample performance, "
-    "not in-sample fit. Every number is computed by scripts/run_part_b.py from "
-    "the data described in the report."
+    "Every number is computed by scripts/run_part_b.py from the data described in "
+    "the report - out-of-sample, not in-sample fit."
 )
 
 
@@ -170,6 +203,10 @@ def _pct(x: float) -> str:
     return f"{x:+.1%}" if np.isfinite(x) else "n/a"
 
 
+def _sign_tone(value: float) -> str:
+    return "pos" if value > 0 else ("neg" if value < 0 else "")
+
+
 def _theme(
     fig: go.Figure,
     *,
@@ -182,7 +219,7 @@ def _theme(
     legend_y: float = 1.12,
     legend_x: float = 1,
 ) -> go.Figure:
-    """Apply the modern Quantis chart style to a freshly-built figure."""
+    """Apply the dark Quantis chart style to a freshly-built figure."""
     legend_below = legend_y < 0
     top_margin = 52 if showlegend and not legend_below else 36
     bottom_margin = (
@@ -190,32 +227,35 @@ def _theme(
         else (66 if slider else (52 if legend_below else 34))
     )
     fig.update_layout(
-        template="plotly_white",
+        template=None,
         height=height,
         margin={"l": 12, "r": 12, "t": top_margin, "b": bottom_margin},
-        paper_bgcolor="white",
-        plot_bgcolor="white",
+        paper_bgcolor=BG,
+        plot_bgcolor=BG,
         font={"family": "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif",
               "size": 13, "color": TEXT},
         hovermode=hovermode,
-        hoverlabel={"bgcolor": "#0F172A", "bordercolor": "white", "font": {"color": "white"}},
+        hoverlabel={"bgcolor": PANEL_HI, "bordercolor": BORDER, "font": {"color": TEXT}},
         showlegend=showlegend,
         legend={
             "orientation": "h", "y": legend_y, "x": legend_x,
             "xanchor": "left" if legend_below else "right",
             "yanchor": "top" if legend_below else "bottom",
-            "title": None, "font": {"color": GREY, "size": 12},
+            "title": None, "font": {"color": MUTED, "size": 12},
         },
         title={"text": title, "x": 0, "xanchor": "left", "font": {"size": 16, "color": TEXT}}
         if title else None,
     )
     fig.update_xaxes(
-        showgrid=False, showline=False, zeroline=False, tickfont={"color": GREY},
-        rangeslider={"visible": True, "thickness": 0.07, "bordercolor": BORDER} if slider else None,
+        showgrid=False, showline=False, zeroline=False, tickfont={"color": MUTED},
+        rangeslider={
+            "visible": True, "thickness": 0.07,
+            "bordercolor": BORDER, "bgcolor": PANEL,
+        } if slider else None,
     )
     fig.update_yaxes(
-        showgrid=True, gridcolor=GRID, zeroline=False, tickfont={"color": GREY},
-        title=ytitle, title_font={"size": 12, "color": GREY},
+        showgrid=True, gridcolor=GRID, zeroline=False, tickfont={"color": MUTED},
+        title=ytitle, title_font={"size": 12, "color": MUTED},
     )
     return fig
 
@@ -224,14 +264,11 @@ def _plot(fig: go.Figure) -> None:
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
-def _tile(label: str, value: str) -> None:
+def _tile(label: str, value: str, tone: str = "") -> None:
     st.markdown(
-        f'<div style="background:{CARD_BG};border:1px solid {BORDER};border-radius:16px;'
-        f'padding:12px 14px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">'
-        f'<div style="font-size:11px;font-weight:700;letter-spacing:0.06em;'
-        f'color:{GREY};text-transform:uppercase;">{label}</div>'
-        f'<div style="font-size:24px;font-weight:700;color:{TEXT};'
-        f'line-height:1.3;margin-top:2px;">{value}</div></div>',
+        f'<div class="qtile">'
+        f'<div class="qtil-label">{label}</div>'
+        f'<div class="qtil-val {tone}">{value}</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -274,15 +311,17 @@ def compare_tab() -> None:
     first = view.iloc[0]
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
-        _tile("Annualised return", _pct(first["annualized_return"]))
+        _tile("Annualised return", _pct(first["annualized_return"]),
+              _sign_tone(first["annualized_return"]))
     with c2:
         _tile("Annualised vol", f"{first['annualized_volatility']:.1%}")
     with c3:
-        _tile("Sharpe", f"{first['sharpe_ratio']:.2f}")
+        _tile("Sharpe", f"{first['sharpe_ratio']:.2f}", _sign_tone(first["sharpe_ratio"]))
     with c4:
-        _tile("Max drawdown", f"{first['max_drawdown']:.1%}")
+        _tile("Max drawdown", f"{first['max_drawdown']:.1%}", "neg")
     with c5:
-        _tile("Growth of $1", f"${first['growth_of_1']:.2f}")
+        _tile("Growth of $1", f"${first['growth_of_1']:.2f}",
+              "pos" if first["growth_of_1"] >= 1 else "neg")
     st.caption(
         f"Headline numbers shown for **{first['fund']}** - all selected funds "
         "are in the table below."
@@ -328,7 +367,7 @@ def compare_tab() -> None:
            ytitle="Annualised return", hovermode="closest",
            legend_y=-0.2, legend_x=0)
     fig2.update_xaxes(tickformat=".0%", title="Annualised volatility",
-                      title_font={"size": 12, "color": GREY})
+                      title_font={"size": 12, "color": MUTED})
     _plot(fig2)
 
 
@@ -346,22 +385,24 @@ def fact_sheet_tab() -> None:
 
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
-        _tile("Annualised return", _pct(m["annualized_return"]))
+        _tile("Annualised return", _pct(m["annualized_return"]),
+              _sign_tone(m["annualized_return"]))
     with c2:
         _tile("Annualised vol", f"{m['annualized_volatility']:.1%}")
     with c3:
-        _tile("Sharpe ratio", f"{m['sharpe_ratio']:.2f}")
+        _tile("Sharpe ratio", f"{m['sharpe_ratio']:.2f}", _sign_tone(m["sharpe_ratio"]))
     with c4:
-        _tile("Max drawdown", f"{m['max_drawdown']:.1%}")
+        _tile("Max drawdown", f"{m['max_drawdown']:.1%}", "neg")
     with c5:
-        _tile("Growth of $1", f"${m['growth_of_1']:.2f}")
+        _tile("Growth of $1", f"${m['growth_of_1']:.2f}",
+              "pos" if m["growth_of_1"] >= 1 else "neg")
 
     col_l, col_r = st.columns(2)
     with col_l:
         fig = go.Figure(go.Scatter(
             x=growth.index, y=growth, mode="lines",
-            line={"color": BLUE, "width": 2.4},
-            fill="tozeroy", fillcolor=_rgba(BLUE, 0.08),
+            line={"color": GREEN, "width": 2.4},
+            fill="tozeroy", fillcolor=_rgba(GREEN, 0.08),
             hovertemplate="%{x|%d %b %Y}<br>Value of $1: %{y:.2f}<extra></extra>",
         ))
         _theme(fig, height=400, title="Growth of $1", ytitle="Value of $1",
@@ -463,15 +504,17 @@ def allocate_tab() -> None:
     m = summary_metrics(blended)
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
-        _tile("Blended return", _pct(m["annualized_return"]))
+        _tile("Blended return", _pct(m["annualized_return"]),
+              _sign_tone(m["annualized_return"]))
     with c2:
         _tile("Blended vol", f"{m['annualized_volatility']:.1%}")
     with c3:
-        _tile("Blended Sharpe", f"{m['sharpe_ratio']:.2f}")
+        _tile("Blended Sharpe", f"{m['sharpe_ratio']:.2f}", _sign_tone(m["sharpe_ratio"]))
     with c4:
-        _tile("Blended max drawdown", f"{m['max_drawdown']:.1%}")
+        _tile("Blended max drawdown", f"{m['max_drawdown']:.1%}", "neg")
     with c5:
-        _tile("Blended growth of $1", f"${m['growth_of_1']:.2f}")
+        _tile("Blended growth of $1", f"${m['growth_of_1']:.2f}",
+              "pos" if m["growth_of_1"] >= 1 else "neg")
 
     col_p, col_g = st.columns(2)
     with col_p:
@@ -504,8 +547,8 @@ def allocate_tab() -> None:
             ))
         fig.add_trace(go.Scatter(
             x=growth.index, y=growth, mode="lines", name="Your portfolio",
-            line={"color": RED, "width": 2.6},
-            fill="tozeroy", fillcolor=_rgba(RED, 0.08),
+            line={"color": GREEN, "width": 2.6},
+            fill="tozeroy", fillcolor=_rgba(GREEN, 0.08),
             hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.2f}<extra></extra>",
         ))
         _theme(fig, height=400, title="Your allocation vs the funds",
@@ -537,11 +580,11 @@ def sentiment_tab() -> None:
     lag = sub["sentiment_lag1"].dropna()
     fig.add_trace(go.Scatter(
         x=lag.index, y=lag, mode="lines", name="Lagged 1 day (what trades can use)",
-        line={"color": RED, "width": 1.4},
-        fill="tozeroy", fillcolor=_rgba(RED, 0.05),
+        line={"color": GREEN, "width": 1.4},
+        fill="tozeroy", fillcolor=_rgba(GREEN, 0.05),
         hovertemplate="%{x|%d %b %Y}<br>%{fullData.name}: %{y:.3f}<extra></extra>",
     ))
-    fig.add_hline(y=0.0, line_dash="dot", line_color=GREY, line_width=1)
+    fig.add_hline(y=0.0, line_dash="dot", line_color=MUTED, line_width=1)
     _theme(fig, height=430, title=f"{sector} sector sentiment over time",
            ytitle="Sentiment (compound)", slider=True, legend_y=-0.2, legend_x=0)
     fig.update_yaxes(tickformat=".3f")
@@ -556,7 +599,8 @@ def sentiment_tab() -> None:
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        _tile("Selected sector: mean", f"{sub['sentiment'].mean():+.4f}")
+        _tile("Selected sector: mean", f"{sub['sentiment'].mean():+.4f}",
+              _sign_tone(sub["sentiment"].mean()))
     with c2:
         _tile("Selected sector: std", f"{sub['sentiment'].std():.4f}")
     with c3:
