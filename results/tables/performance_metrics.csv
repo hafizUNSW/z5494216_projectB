@@ -1,0 +1,15 @@
+fund,family,method,annualized_return,annualized_volatility,sharpe_ratio,max_drawdown,growth_of_1,oos_period
+Equity Equal Weight,equity,equal_weight,0.059748,0.177052,0.4162,-0.203219,1.1223,2021-12-31 to 2023-12-29
+Equity Minimum Variance,equity,minimum_variance,0.025819,0.134645,0.2566,-0.164519,1.052,2021-12-31 to 2023-12-29
+Equity Maximum Sharpe,equity,max_sharpe,-0.013671,0.18801,0.0209,-0.255183,0.973,2021-12-31 to 2023-12-29
+Equity Risk Parity,equity,risk_parity,0.032146,0.162541,0.2758,-0.190225,1.0649,2021-12-31 to 2023-12-29
+Crypto Equal Weight,crypto,equal_weight,-0.171421,0.715407,0.0965,-0.763319,0.6111,2021-05-19 to 2023-12-31
+Crypto Minimum Variance,crypto,minimum_variance,0.074559,0.640359,0.4328,-0.734239,1.2073,2021-05-19 to 2023-12-31
+Crypto Maximum Sharpe,crypto,max_sharpe,-0.178181,0.710667,0.0793,-0.760082,0.5981,2021-05-19 to 2023-12-31
+Crypto Risk Parity,crypto,risk_parity,-0.138293,0.700074,0.1389,-0.759261,0.6772,2021-05-19 to 2023-12-31
+Combined Equal Weight,combined,equal_weight,0.026671,0.209075,0.2304,-0.269423,1.0537,2021-12-31 to 2023-12-29
+Combined Minimum Variance,combined,minimum_variance,0.01685,0.135812,0.1908,-0.168032,1.0338,2021-12-31 to 2023-12-29
+Combined Maximum Sharpe,combined,max_sharpe,-0.072922,0.199993,-0.2783,-0.292119,0.8602,2021-12-31 to 2023-12-29
+Combined Risk Parity,combined,risk_parity,0.024778,0.170098,0.2288,-0.214959,1.0499,2021-12-31 to 2023-12-29
+Equity Equal Weight + Sentiment,equity,equal_weight + sentiment,0.059217,0.176697,0.4138,-0.201972,1.1212,2022-01-03 to 2023-12-29
+Equity Minimum Variance + Sentiment,equity,minimum_variance + sentiment,0.029694,0.133742,0.2856,-0.164573,1.0599,2022-01-03 to 2023-12-29

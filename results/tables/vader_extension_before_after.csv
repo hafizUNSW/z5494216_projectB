@@ -1,0 +1,11 @@
+sentence,vader_before,extended_after,change,woke_up
+The company reported an earnings beat.,0.0,0.8402,0.8402,1
+The stock surged on strong guidance.,0.5106,0.4404,-0.0702,0
+Management issued a guidance cut.,-0.2732,-0.5423,-0.2691,0
+Analysts issued a downgrade.,0.0,-0.5574,-0.5574,1
+The firm announced a buyback.,0.0,0.4215,0.4215,1
+Revenue was sharply lower than expected.,-0.296,-0.2944,0.0016,0
+The filing disclosed a material weakness.,-0.4215,-0.5423,-0.1208,0
+The auditor raised a going concern warning.,-0.34,-0.875,-0.535,0
+The firm reduced its debt.,-0.3612,-0.3612,0.0,0
+The stock is volatile.,0.0,0.0,0.0,0

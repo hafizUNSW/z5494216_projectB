@@ -1,0 +1,9 @@
+base_fund,kappa,sharpe_ratio,annualized_return,annualized_volatility,max_drawdown
+Equity Equal Weight,0.5,0.415,0.059483,0.176869,-0.202595
+Equity Equal Weight,1.0,0.4138,0.059217,0.176697,-0.201972
+Equity Equal Weight,2.0,0.4113,0.058673,0.17639,-0.20073
+Equity Equal Weight,3.0,0.4087,0.058124,0.176131,-0.19949
+Equity Minimum Variance,0.5,0.2681,0.027339,0.134128,-0.164511
+Equity Minimum Variance,1.0,0.2856,0.029694,0.133742,-0.164573
+Equity Minimum Variance,2.0,0.2985,0.031386,0.133262,-0.164747
+Equity Minimum Variance,3.0,0.2769,0.028417,0.13318,-0.166857

@@ -1,0 +1,141 @@
+fund,ticker,weight,weight_pct
+Equity Equal Weight,ABBV,0.02,2.0
+Equity Equal Weight,ABT,0.02,2.0
+Equity Equal Weight,ADBE,0.02,2.0
+Equity Equal Weight,AEP,0.02,2.0
+Equity Equal Weight,AMD,0.02,2.0
+Equity Equal Weight,AMGN,0.02,2.0
+Equity Equal Weight,AMT,0.02,2.0
+Equity Equal Weight,BA,0.02,2.0
+Equity Equal Weight,CAT,0.02,2.0
+Equity Equal Weight,CCI,0.02,2.0
+Equity Minimum Variance,MRK,0.154867,15.49
+Equity Minimum Variance,WMT,0.127705,12.77
+Equity Minimum Variance,KO,0.108381,10.84
+Equity Minimum Variance,ABBV,0.093452,9.35
+Equity Minimum Variance,EA,0.091085,9.11
+Equity Minimum Variance,AMGN,0.086683,8.67
+Equity Minimum Variance,O,0.058168,5.82
+Equity Minimum Variance,CVX,0.041495,4.15
+Equity Minimum Variance,TTWO,0.037279,3.73
+Equity Minimum Variance,DUK,0.033174,3.32
+Equity Maximum Sharpe,AMGN,0.2,20.0
+Equity Maximum Sharpe,MRK,0.2,20.0
+Equity Maximum Sharpe,XOM,0.148023,14.8
+Equity Maximum Sharpe,GE,0.115234,11.52
+Equity Maximum Sharpe,TMUS,0.08349,8.35
+Equity Maximum Sharpe,OXY,0.082236,8.22
+Equity Maximum Sharpe,ABBV,0.079695,7.97
+Equity Maximum Sharpe,NUE,0.026823,2.68
+Equity Maximum Sharpe,NVDA,0.026017,2.6
+Equity Maximum Sharpe,SLB,0.022493,2.25
+Equity Risk Parity,MRK,0.043656,4.37
+Equity Risk Parity,ABBV,0.035674,3.57
+Equity Risk Parity,WMT,0.035002,3.5
+Equity Risk Parity,AMGN,0.032622,3.26
+Equity Risk Parity,KO,0.030112,3.01
+Equity Risk Parity,GILD,0.027342,2.73
+Equity Risk Parity,DUK,0.026866,2.69
+Equity Risk Parity,EA,0.025702,2.57
+Equity Risk Parity,SO,0.025403,2.54
+Equity Risk Parity,T,0.02488,2.49
+Crypto Equal Weight,ADA-USD,0.1,10.0
+Crypto Equal Weight,BCH-USD,0.1,10.0
+Crypto Equal Weight,BTC-USD,0.1,10.0
+Crypto Equal Weight,EOS-USD,0.1,10.0
+Crypto Equal Weight,ETC-USD,0.1,10.0
+Crypto Equal Weight,ETH-USD,0.1,10.0
+Crypto Equal Weight,LTC-USD,0.1,10.0
+Crypto Equal Weight,TRX-USD,0.1,10.0
+Crypto Equal Weight,XLM-USD,0.1,10.0
+Crypto Equal Weight,XRP-USD,0.1,10.0
+Crypto Minimum Variance,TRX-USD,0.35,35.0
+Crypto Minimum Variance,BTC-USD,0.35,35.0
+Crypto Minimum Variance,ETH-USD,0.127963,12.8
+Crypto Minimum Variance,XLM-USD,0.06534,6.53
+Crypto Minimum Variance,LTC-USD,0.046869,4.69
+Crypto Minimum Variance,BCH-USD,0.042839,4.28
+Crypto Minimum Variance,ADA-USD,0.016989,1.7
+Crypto Minimum Variance,EOS-USD,0.0,0.0
+Crypto Minimum Variance,ETC-USD,0.0,0.0
+Crypto Minimum Variance,XRP-USD,0.0,0.0
+Crypto Maximum Sharpe,BTC-USD,0.35,35.0
+Crypto Maximum Sharpe,TRX-USD,0.308939,30.89
+Crypto Maximum Sharpe,BCH-USD,0.188747,18.87
+Crypto Maximum Sharpe,XRP-USD,0.152315,15.23
+Crypto Maximum Sharpe,ADA-USD,0.0,0.0
+Crypto Maximum Sharpe,EOS-USD,0.0,0.0
+Crypto Maximum Sharpe,ETH-USD,0.0,0.0
+Crypto Maximum Sharpe,ETC-USD,0.0,0.0
+Crypto Maximum Sharpe,LTC-USD,0.0,0.0
+Crypto Maximum Sharpe,XLM-USD,0.0,0.0
+Crypto Risk Parity,TRX-USD,0.164131,16.41
+Crypto Risk Parity,BTC-USD,0.127222,12.72
+Crypto Risk Parity,ETH-USD,0.101086,10.11
+Crypto Risk Parity,BCH-USD,0.092895,9.29
+Crypto Risk Parity,LTC-USD,0.092084,9.21
+Crypto Risk Parity,ADA-USD,0.089901,8.99
+Crypto Risk Parity,EOS-USD,0.085949,8.59
+Crypto Risk Parity,XLM-USD,0.085356,8.54
+Crypto Risk Parity,ETC-USD,0.082312,8.23
+Crypto Risk Parity,XRP-USD,0.079064,7.91
+Combined Equal Weight,ABBV,0.016667,1.67
+Combined Equal Weight,ABT,0.016667,1.67
+Combined Equal Weight,ADA-USD,0.016667,1.67
+Combined Equal Weight,ADBE,0.016667,1.67
+Combined Equal Weight,AEP,0.016667,1.67
+Combined Equal Weight,AMD,0.016667,1.67
+Combined Equal Weight,AMGN,0.016667,1.67
+Combined Equal Weight,AMT,0.016667,1.67
+Combined Equal Weight,BA,0.016667,1.67
+Combined Equal Weight,BCH-USD,0.016667,1.67
+Combined Minimum Variance,MRK,0.142639,14.26
+Combined Minimum Variance,WMT,0.119324,11.93
+Combined Minimum Variance,KO,0.099292,9.93
+Combined Minimum Variance,ABBV,0.091375,9.14
+Combined Minimum Variance,EA,0.085257,8.53
+Combined Minimum Variance,AMGN,0.084751,8.48
+Combined Minimum Variance,O,0.054703,5.47
+Combined Minimum Variance,CVX,0.041917,4.19
+Combined Minimum Variance,DUK,0.035879,3.59
+Combined Minimum Variance,T,0.034271,3.43
+Combined Maximum Sharpe,MRK,0.2,20.0
+Combined Maximum Sharpe,AMGN,0.190756,19.08
+Combined Maximum Sharpe,XOM,0.136087,13.61
+Combined Maximum Sharpe,GE,0.112008,11.2
+Combined Maximum Sharpe,OXY,0.086746,8.67
+Combined Maximum Sharpe,TMUS,0.082772,8.28
+Combined Maximum Sharpe,ABBV,0.078704,7.87
+Combined Maximum Sharpe,SLB,0.031814,3.18
+Combined Maximum Sharpe,NUE,0.03178,3.18
+Combined Maximum Sharpe,NVDA,0.027907,2.79
+Combined Risk Parity,MRK,0.040927,4.09
+Combined Risk Parity,ABBV,0.03379,3.38
+Combined Risk Parity,WMT,0.0327,3.27
+Combined Risk Parity,AMGN,0.031013,3.1
+Combined Risk Parity,KO,0.028123,2.81
+Combined Risk Parity,DUK,0.025999,2.6
+Combined Risk Parity,GILD,0.025799,2.58
+Combined Risk Parity,SO,0.024337,2.43
+Combined Risk Parity,EA,0.023605,2.36
+Combined Risk Parity,T,0.023507,2.35
+Equity Equal Weight + Sentiment,O,0.02287,2.29
+Equity Equal Weight + Sentiment,NVDA,0.022535,2.25
+Equity Equal Weight + Sentiment,AMD,0.022482,2.25
+Equity Equal Weight + Sentiment,NEE,0.022195,2.22
+Equity Equal Weight + Sentiment,T,0.022027,2.2
+Equity Equal Weight + Sentiment,INTC,0.021319,2.13
+Equity Equal Weight + Sentiment,MMM,0.021253,2.13
+Equity Equal Weight + Sentiment,ABT,0.021173,2.12
+Equity Equal Weight + Sentiment,D,0.021019,2.1
+Equity Equal Weight + Sentiment,V,0.020975,2.1
+Equity Minimum Variance + Sentiment,MRK,0.159015,15.9
+Equity Minimum Variance + Sentiment,WMT,0.143843,14.38
+Equity Minimum Variance + Sentiment,KO,0.118775,11.88
+Equity Minimum Variance + Sentiment,ABBV,0.101781,10.18
+Equity Minimum Variance + Sentiment,EA,0.094292,9.43
+Equity Minimum Variance + Sentiment,AMGN,0.090502,9.05
+Equity Minimum Variance + Sentiment,O,0.067617,6.76
+Equity Minimum Variance + Sentiment,CVX,0.040978,4.1
+Equity Minimum Variance + Sentiment,TTWO,0.032874,3.29
+Equity Minimum Variance + Sentiment,T,0.032631,3.26

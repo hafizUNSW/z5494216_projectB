@@ -1,0 +1,13 @@
+fund,n_rebalances,avg_turnover_per_rebalance,annualised_turnover,estimated_cost_annualised,gross_annualised_return,net_annualised_return
+Combined Equal Weight,24,0.0,0.0,0.0,0.026671,0.026671
+Combined Maximum Sharpe,24,0.3769,4.5223,0.452232,-0.072922,-0.525154
+Combined Minimum Variance,24,0.1291,1.5491,0.15491,0.01685,-0.13806
+Combined Risk Parity,24,0.0236,0.2831,0.028314,0.024778,-0.003536
+Crypto Equal Weight,46,0.0,0.0,0.0,-0.171421,-0.171421
+Crypto Maximum Sharpe,46,0.3313,3.9752,0.397521,-0.178181,-0.575702
+Crypto Minimum Variance,46,0.078,0.936,0.093603,0.074559,-0.019044
+Crypto Risk Parity,46,0.0117,0.1398,0.013984,-0.138293,-0.152277
+Equity Equal Weight,24,0.0,0.0,0.0,0.059748,0.059748
+Equity Maximum Sharpe,24,0.3293,3.951,0.395104,-0.013671,-0.408775
+Equity Minimum Variance,24,0.1385,1.662,0.166203,0.025819,-0.140384
+Equity Risk Parity,24,0.0221,0.2654,0.026541,0.032146,0.005605

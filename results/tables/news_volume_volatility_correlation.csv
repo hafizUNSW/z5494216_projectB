@@ -1,0 +1,11 @@
+sector,n_days,spearman_rho
+Comm,4936,-0.0435
+Consumer,4994,0.0597
+Energy,4962,-0.2036
+Financials,4972,-0.04
+Healthcare,4989,0.0291
+Industrials,4547,0.1754
+Materials,4688,0.1265
+RealEstate,4673,0.1099
+Tech,4693,0.1567
+Utilities,4726,0.1954

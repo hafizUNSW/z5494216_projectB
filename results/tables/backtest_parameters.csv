@@ -1,0 +1,31 @@
+parameter,value
+estimation_window,504
+rebalance_frequency,every 21 periods (~monthly)
+risk_free_rate,0.0
+transaction_costs,10 bps one-sided in turnover model
+long_only,True
+covariance,sample covariance shrunk 10% toward diagonal
+equity_family,equity
+equity_n_assets,50
+equity_window,504
+equity_rebalance,21
+equity_periods_per_year,252
+equity_first_live_date,2021-12-31
+equity_oos_days,502
+equity_cap,0.2
+crypto_family,crypto
+crypto_n_assets,10
+crypto_window,504
+crypto_rebalance,21
+crypto_periods_per_year,365
+crypto_first_live_date,2021-05-19
+crypto_oos_days,957
+crypto_cap,0.35
+combined_family,combined
+combined_n_assets,60
+combined_window,504
+combined_rebalance,21
+combined_periods_per_year,252
+combined_first_live_date,2021-12-31
+combined_oos_days,502
+combined_cap,0.2
