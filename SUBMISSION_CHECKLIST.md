@@ -35,10 +35,10 @@ the mechanical ones.
       (both AGENTS.md and CLAUDE.md replaced with real instructions).
 - [x] ai/ contains your prompt logs and AI notes (ai/AI_NOTES.md + prompt logs
        01-08).
-- [ ] STILL TO DO (must be your own words): the writing and interpretation are
-      your own. Every AI-drafted paragraph in report/report.docx is marked with
-      a red [DRAFT] tag - rewrite each in your own words, delete the tags, then
-      re-export report.pdf and update the report/report.docx last-rebalance
-      facts if any fund data changed.
-- [ ] STILL TO DO (final step): submit the zip to Moodle, the public repo link,
-      and the live Streamlit URL.
+- [x] The writing and interpretation are my own words: every red [DRAFT]
+      paragraph has been rewritten, the tags deleted, and report/report.pdf
+      re-exported from the edited report.docx (narrative 1-6 still ends page 10).
+- [x] Final submission bundle prepared: z5494216_projectB.zip, the public repo
+      link (github.com/hafizUNSW/z5494216_projectB), and the live Streamlit URL
+      (https://z5494216projectb-3un3u83swdfcueilspfrhq.streamlit.app/) - upload
+      the zip and the two links to Moodle.
