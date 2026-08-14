@@ -1,0 +1,11 @@
+Quantis - Part B submission links (z5494216_projectB)
+=====================================================
+
+Public GitHub repository:
+    https://github.com/hafizUNSW/z5494216_projectB
+
+Live Streamlit app (public):
+    https://z5494216projectb-3un3u83swdfcueilspfrhq.streamlit.app/
+
+Branch: main
+App entrypoint: streamlit_app.py
